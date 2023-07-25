@@ -40,7 +40,10 @@ img.addEventListener('load', () => {
   createImageBitmap(img, {
     resizeWidth: 1440,
     resizeHeight: 2960
-  }).then(() => renderMaskCanvas())
+  }).then((bitmap) => {
+    imageBitmap = bitmap
+    renderMaskCanvas()
+  })
 })
 
 img.addEventListener('error', () => {
