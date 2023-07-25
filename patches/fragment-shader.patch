@@ -1,0 +1,81 @@
+diff --git a/src/fragment-shader.glsl b/src/fragment-shader.glsl
+index 0f55073..2bc4bab 100644
+--- a/src/fragment-shader.glsl
++++ b/src/fragment-shader.glsl
+@@ -2,11 +2,10 @@ precision highp float;
+
+ uniform vec2 resolution;
+
+-// TODO: можешь просто кидать 3 компонента от 0 до 255 и в гл делать vec4(color/255.0, 1.0)
+-uniform vec4 color1;
+-uniform vec4 color2;
+-uniform vec4 color3;
+-uniform vec4 color4;
++uniform vec3 color1;
++uniform vec3 color2;
++uniform vec3 color3;
++uniform vec3 color4;
+
+ uniform vec2 color1Pos;
+ uniform vec2 color2Pos;
+@@ -31,8 +30,8 @@ void main() {
+   float dpt = abs(dp1 + dp2 + dp3 + dp4);
+
+   gl_FragColor =
+-    (color1 * dp1 / dpt) +
+-    (color2 * dp2 / dpt) +
+-    (color3 * dp3 / dpt) +
+-    (color4 * dp4 / dpt);
++    (vec4(color1/255.0, 1.0) * dp1 / dpt) +
++    (vec4(color2/255.0, 1.0) * dp2 / dpt) +
++    (vec4(color3/255.0, 1.0) * dp3 / dpt) +
++    (vec4(color4/255.0, 1.0) * dp4 / dpt);
+ }
+diff --git a/src/index.ts b/src/index.ts
+index 8238560..c9dca98 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -125,10 +125,10 @@ let color3Pos = [targetColor3Pos![0], targetColor3Pos![1]]
+ let color4Pos = [targetColor4Pos![0], targetColor4Pos![1]]
+
+ const colors = {
+-  color1: hexToVec4('#dbddbb'),
+-  color2: hexToVec4('#6ba587'),
+-  color3: hexToVec4('#d5d88d'),
+-  color4: hexToVec4('#88b884')
++  color1: hexToVec3('#dbddbb'),
++  color2: hexToVec3('#6ba587'),
++  color3: hexToVec3('#d5d88d'),
++  color4: hexToVec3('#88b884')
+ }
+
+ render()
+diff --git a/src/utils.ts b/src/utils.ts
+index 8709dc4..abbfa50 100644
+--- a/src/utils.ts
++++ b/src/utils.ts
+@@ -61,9 +61,9 @@ function loadShader(
+   return shader
+ }
+
+-export function hexToVec4(
++export function hexToVec3(
+   hex: string
+-): readonly [r: number, g: number, b: number, alpha: number] {
++): readonly [r: number, g: number, b: number] {
+   if (hex.startsWith('#')) {
+     hex = hex.slice(1)
+   }
+@@ -72,11 +72,5 @@ export function hexToVec4(
+   const g = parseInt(hex.slice(2, 4), 16)
+   const b = parseInt(hex.slice(4, 6), 16)
+
+-  let alpha = 255
+-  if (hex.length === 8) {
+-    alpha = parseInt(hex.slice(6, 8), 16)
+-  }
+-
+-  const color = [r / 255.0, g / 255.0, b / 255.0, alpha / 255.0] as const
+-  return color
++  return [r, g, b]
+ }

@@ -10,8 +10,12 @@
     "format": "prettier --write '**/*.{js,ts,tsx,json}'"
   },
   "devDependencies": {
-    "@crashmax/prettier-config": "^4.1.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "@crashmax/prettier-config": "4.1.0",
+    "typescript": "5.0.2",
+    "vite": "4.4.5"
+  },
+  "dependencies": {
+    "@tweakpane/core": "1.1.9",
+    "tweakpane": "3.1.10"
   }
 }
