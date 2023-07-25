@@ -1,4 +1,4 @@
-import { hexToVec4 } from './utils'
+import { hexToVec } from './utils'
 
 export const tweakpaneConfig = {
   colors: {
@@ -11,9 +11,9 @@ export const tweakpaneConfig = {
 
 export const config = {
   colors: {
-    color1: hexToVec4(tweakpaneConfig.colors.color1),
-    color2: hexToVec4(tweakpaneConfig.colors.color2),
-    color3: hexToVec4(tweakpaneConfig.colors.color3),
-    color4: hexToVec4(tweakpaneConfig.colors.color4)
+    color1: hexToVec(tweakpaneConfig.colors.color1),
+    color2: hexToVec(tweakpaneConfig.colors.color2),
+    color3: hexToVec(tweakpaneConfig.colors.color3),
+    color4: hexToVec(tweakpaneConfig.colors.color4)
   }
 }
