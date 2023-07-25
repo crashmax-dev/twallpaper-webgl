@@ -1,4 +1,4 @@
-import { hexToVec } from './utils'
+import { hexToVec3 } from './utils'
 
 export const config = {
   mask: false,
@@ -12,8 +12,8 @@ export const config = {
 }
 
 export const colors = {
-  color1: hexToVec(config.colors.color1),
-  color2: hexToVec(config.colors.color2),
-  color3: hexToVec(config.colors.color3),
-  color4: hexToVec(config.colors.color4)
+  color1: hexToVec3(config.colors.color1),
+  color2: hexToVec3(config.colors.color2),
+  color3: hexToVec3(config.colors.color3),
+  color4: hexToVec3(config.colors.color4)
 }

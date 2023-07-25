@@ -1,7 +1,7 @@
 import { colors, config } from './config.js'
 import fragmentShader from './fragment-shader.glsl?raw'
 import { paneColors, tweakpane } from './tweakpane.js'
-import { hexToVec, loadShaders } from './utils.js'
+import { hexToVec3, loadShaders } from './utils.js'
 import vertexShader from './vertex-shader.glsl?raw'
 
 import './styles.css'
@@ -196,9 +196,9 @@ let color2Pos = [targetColor2Pos![0], targetColor2Pos![1]]
 let color3Pos = [targetColor3Pos![0], targetColor3Pos![1]]
 let color4Pos = [targetColor4Pos![0], targetColor4Pos![1]]
 
-renderGradienCanvas()
+renderGradientCanvas()
 
-function renderGradienCanvas() {
+function renderGradientCanvas() {
   gl.uniform2fv(resolutionLoc, [gl.canvas.width, gl.canvas.height])
   gl.uniform3fv(color1Loc, colors.color1)
   gl.uniform3fv(color2Loc, colors.color2)
@@ -241,7 +241,7 @@ function animate() {
     color3Pos[1] = color3Pos[1] * (1 - speed) + targetColor3Pos[1] * speed
     color4Pos[0] = color4Pos[0] * (1 - speed) + targetColor4Pos[0] * speed
     color4Pos[1] = color4Pos[1] * (1 - speed) + targetColor4Pos[1] * speed
-    renderGradienCanvas()
+    renderGradientCanvas()
     requestAnimationFrame(animate)
   } else {
     animating = false
@@ -254,8 +254,8 @@ tweakpane.on('change', () => {
 
 paneColors.on('change', (event) => {
   // @ts-ignore
-  config.colors[event.presetKey] = hexToVec(event.value)
-  renderGradienCanvas()
+  colors[event.presetKey] = hexToVec3(event.value)
+  renderGradientCanvas()
 })
 
 document.addEventListener('click', () => {

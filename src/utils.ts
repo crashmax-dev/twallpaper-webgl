@@ -61,7 +61,7 @@ function loadShader(
   return shader
 }
 
-export function hexToVec(
+export function hexToVec3(
   hex: string
 ): readonly [r: number, g: number, b: number] {
   if (hex.startsWith('#')) {
