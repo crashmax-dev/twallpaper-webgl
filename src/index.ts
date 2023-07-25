@@ -32,7 +32,7 @@ if (!program) {
 }
 
 // load mask texture
-let imageBitmap: ImageBitmap
+let imageBitmap: ImageBitmap | null = null
 const img = new Image()
 img.crossOrigin = 'anonymous'
 img.src = `patterns/${config.texture}.svg`
@@ -45,6 +45,8 @@ img.onload = async () => {
 }
 
 function renderMaskCanvas() {
+  if (!imageBitmap) return
+
   const { width, height } = maskCanvas
   canvas2d.clearRect(0, 0, width, height)
 
@@ -66,7 +68,7 @@ function renderMaskCanvas() {
 
   const draq = (y: number) => {
     for (let x = 0; x < width; x += imageWidth) {
-      canvas2d.drawImage(imageBitmap, x, y, imageWidth, imageHeight)
+      canvas2d.drawImage(imageBitmap!, x, y, imageWidth, imageHeight)
     }
   }
 
