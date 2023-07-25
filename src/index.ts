@@ -35,7 +35,7 @@ if (!program) {
 let imageBitmap: ImageBitmap
 const img = new Image()
 img.crossOrigin = 'anonymous'
-img.src = `/patterns/${config.texture}.svg`
+img.src = `patterns/${config.texture}.svg`
 img.onload = async () => {
   imageBitmap = await createImageBitmap(img, {
     resizeWidth: 1440,
