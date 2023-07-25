@@ -21,7 +21,7 @@ if (!program) {
 // load shaders
 const shaders = loadShaders(gl, [vertexShader, fragmentShader])
 for (const shader of shaders) {
-  gl.attachShader(program, shader!)
+  gl.attachShader(program, shader)
 }
 
 gl.linkProgram(program)

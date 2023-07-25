@@ -3,17 +3,22 @@ const defaultShaderType = ['VERTEX_SHADER', 'FRAGMENT_SHADER']
 export function loadShaders(
   gl: WebGLRenderingContext,
   shaderSources: string[]
-) {
-  const shaders = []
+): WebGLShader[] {
+  const shaders: WebGLShader[] = []
   for (let i = 0; i < shaderSources.length; ++i) {
-    shaders.push(
-      loadShader(
-        gl,
-        shaderSources[i],
-        // @ts-ignore
-        gl[defaultShaderType[i]]
-      )
+    const shader = loadShader(
+      gl,
+      shaderSources[i],
+      // @ts-ignore
+      gl[defaultShaderType[i]]
     )
+
+    if (!shader) {
+      console.log(`Error loading shader ${shaderSources[i]}`)
+      continue
+    }
+
+    shaders.push(shader)
   }
 
   return shaders
@@ -23,7 +28,7 @@ function loadShader(
   gl: WebGLRenderingContext,
   shaderSource: string,
   shaderType: number
-) {
+): WebGLShader | null {
   // Create the shader object
   const shader = gl.createShader(shaderType)!
 
