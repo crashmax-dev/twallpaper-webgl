@@ -1,6 +1,8 @@
 import { hexToVec } from './utils'
 
-export const tweakpaneConfig = {
+export const config = {
+  mask: false,
+  texture: 'animals',
   colors: {
     color1: '#dbddbb',
     color2: '#6ba587',
@@ -9,11 +11,9 @@ export const tweakpaneConfig = {
   }
 }
 
-export const config = {
-  colors: {
-    color1: hexToVec(tweakpaneConfig.colors.color1),
-    color2: hexToVec(tweakpaneConfig.colors.color2),
-    color3: hexToVec(tweakpaneConfig.colors.color3),
-    color4: hexToVec(tweakpaneConfig.colors.color4)
-  }
+export const colors = {
+  color1: hexToVec(config.colors.color1),
+  color2: hexToVec(config.colors.color2),
+  color3: hexToVec(config.colors.color3),
+  color4: hexToVec(config.colors.color4)
 }

@@ -1,15 +1,26 @@
-import { config } from './config.js'
+import { colors, config } from './config.js'
 import fragmentShader from './fragment-shader.glsl?raw'
-import { tweakpane } from './tweakpane.js'
-import { loadShaders } from './utils.js'
+import { paneColors, tweakpane } from './tweakpane.js'
+import { hexToVec, loadShaders } from './utils.js'
 import vertexShader from './vertex-shader.glsl?raw'
 
 import './styles.css'
 
-const canvas = document.createElement('canvas')
-document.body.appendChild(canvas)
+const gradientContainer = document.querySelector('#gradient')!
+const gradientCanvas = document.createElement('canvas')
+gradientCanvas.id = 'gradient-canvas'
+const maskCanvas = document.createElement('canvas')
+maskCanvas.id = 'mask-canvas'
+maskCanvas.height = innerHeight
+maskCanvas.width = innerWidth
+gradientContainer.append(gradientCanvas, maskCanvas)
 
-const gl = canvas.getContext('webgl')!
+const canvas2d = maskCanvas.getContext('2d')!
+if (!canvas2d) {
+  throw new Error('Canvas2D not supported')
+}
+
+const gl = gradientCanvas.getContext('webgl')!
 if (!gl) {
   throw new Error('WebGL not supported')
 }
@@ -18,6 +29,65 @@ if (!gl) {
 const program = gl.createProgram()!
 if (!program) {
   throw new Error('Unable to create WebGLProgram')
+}
+
+// load mask texture
+let imageBitmap: ImageBitmap
+const img = new Image()
+img.crossOrigin = 'anonymous'
+img.src = `/patterns/${config.texture}.svg`
+img.onload = async () => {
+  imageBitmap = await createImageBitmap(img, {
+    resizeWidth: 1440,
+    resizeHeight: 2960
+  })
+  renderMaskCanvas()
+}
+
+function renderMaskCanvas() {
+  const { width, height } = maskCanvas
+  canvas2d.clearRect(0, 0, width, height)
+
+  let imageWidth = imageBitmap.width,
+    imageHeight = imageBitmap.height
+  const patternHeight =
+    (500 + window.visualViewport!.height / 2.5) * devicePixelRatio
+  const ratio = patternHeight / imageHeight
+  imageWidth *= ratio
+  imageHeight = patternHeight
+
+  if (config.mask) {
+    canvas2d.fillStyle = '#000'
+    canvas2d.fillRect(0, 0, width, height)
+    canvas2d.globalCompositeOperation = 'destination-out'
+  } else {
+    canvas2d.globalCompositeOperation = 'source-over'
+  }
+
+  const draq = (y: number) => {
+    for (let x = 0; x < width; x += imageWidth) {
+      canvas2d.drawImage(imageBitmap, x, y, imageWidth, imageHeight)
+    }
+  }
+
+  const centerY = (height - imageHeight) / 2
+  draq(centerY)
+
+  if (centerY > 0) {
+    let topY = centerY
+    do {
+      draq((topY -= imageHeight))
+    } while (topY >= 0)
+  }
+
+  const endY = height - 1
+  for (
+    let bottomY = centerY + imageHeight;
+    bottomY < endY;
+    bottomY += imageHeight
+  ) {
+    draq(bottomY)
+  }
 }
 
 // load shaders
@@ -85,15 +155,15 @@ gl.vertexAttribPointer(
   0 // start at the beginning of the buffer
 )
 
-var resolutionLoc = gl.getUniformLocation(program, 'resolution')
-var color1Loc = gl.getUniformLocation(program, 'color1')
-var color2Loc = gl.getUniformLocation(program, 'color2')
-var color3Loc = gl.getUniformLocation(program, 'color3')
-var color4Loc = gl.getUniformLocation(program, 'color4')
-var color1PosLoc = gl.getUniformLocation(program, 'color1Pos')
-var color2PosLoc = gl.getUniformLocation(program, 'color2Pos')
-var color3PosLoc = gl.getUniformLocation(program, 'color3Pos')
-var color4PosLoc = gl.getUniformLocation(program, 'color4Pos')
+const resolutionLoc = gl.getUniformLocation(program, 'resolution')
+const color1Loc = gl.getUniformLocation(program, 'color1')
+const color2Loc = gl.getUniformLocation(program, 'color2')
+const color3Loc = gl.getUniformLocation(program, 'color3')
+const color4Loc = gl.getUniformLocation(program, 'color4')
+const color1PosLoc = gl.getUniformLocation(program, 'color1Pos')
+const color2PosLoc = gl.getUniformLocation(program, 'color2Pos')
+const color3PosLoc = gl.getUniformLocation(program, 'color3Pos')
+const color4PosLoc = gl.getUniformLocation(program, 'color4Pos')
 
 const keyPoints = [
   [0.265, 0.582], //0
@@ -126,14 +196,14 @@ let color2Pos = [targetColor2Pos![0], targetColor2Pos![1]]
 let color3Pos = [targetColor3Pos![0], targetColor3Pos![1]]
 let color4Pos = [targetColor4Pos![0], targetColor4Pos![1]]
 
-render()
+renderGradienCanvas()
 
-function render() {
+function renderGradienCanvas() {
   gl.uniform2fv(resolutionLoc, [gl.canvas.width, gl.canvas.height])
-  gl.uniform3fv(color1Loc, config.colors.color1)
-  gl.uniform3fv(color2Loc, config.colors.color2)
-  gl.uniform3fv(color3Loc, config.colors.color3)
-  gl.uniform3fv(color4Loc, config.colors.color4)
+  gl.uniform3fv(color1Loc, colors.color1)
+  gl.uniform3fv(color2Loc, colors.color2)
+  gl.uniform3fv(color3Loc, colors.color3)
+  gl.uniform3fv(color4Loc, colors.color4)
   gl.uniform2fv(color1PosLoc, color1Pos)
   gl.uniform2fv(color2PosLoc, color2Pos)
   gl.uniform2fv(color3PosLoc, color3Pos)
@@ -171,7 +241,7 @@ function animate() {
     color3Pos[1] = color3Pos[1] * (1 - speed) + targetColor3Pos[1] * speed
     color4Pos[0] = color4Pos[0] * (1 - speed) + targetColor4Pos[0] * speed
     color4Pos[1] = color4Pos[1] * (1 - speed) + targetColor4Pos[1] * speed
-    render()
+    renderGradienCanvas()
     requestAnimationFrame(animate)
   } else {
     animating = false
@@ -179,10 +249,16 @@ function animate() {
 }
 
 tweakpane.on('change', () => {
-  render()
+  renderMaskCanvas()
 })
 
-canvas.addEventListener('click', () => {
+paneColors.on('change', (event) => {
+  // @ts-ignore
+  config.colors[event.presetKey] = hexToVec(event.value)
+  renderGradienCanvas()
+})
+
+document.addEventListener('click', () => {
   updateTargetColors()
   if (!animating) requestAnimationFrame(animate)
 })

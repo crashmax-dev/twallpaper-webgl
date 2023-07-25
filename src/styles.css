@@ -3,9 +3,19 @@ body {
   padding: 0;
 }
 
-html, body {
+html,
+body,
+#gradient,
+canvas {
+  width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+#mask-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 canvas {
@@ -38,7 +48,10 @@ canvas {
   --tp-monitor-foreground-color: hsla(0, 0%, 100%, 0.3);
 }
 
-:root .tp-dfwv {
+#tweakpane {
+  z-index: 9999;
+  position: absolute;
+  right: 8px;
+  top: 8px;
   width: 300px;
-  padding-bottom: 8px;
 }

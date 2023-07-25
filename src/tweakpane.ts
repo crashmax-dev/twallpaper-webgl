@@ -1,24 +1,22 @@
 import { Pane } from 'tweakpane'
 
-import { config, tweakpaneConfig } from './config.js'
-import { hexToVec } from './utils.js'
+import { config } from './config.js'
+
+const container = document.querySelector<HTMLElement>('#tweakpane')!
 
 export const tweakpane = new Pane({
-  document,
+  container,
   expanded: true,
   title: document.title
 })
 
-const colors = tweakpane.addFolder({
+export const paneColors = tweakpane.addFolder({
   title: 'Colors'
 })
 
-colors.addInput(tweakpaneConfig.colors, 'color1')
-colors.addInput(tweakpaneConfig.colors, 'color2')
-colors.addInput(tweakpaneConfig.colors, 'color3')
-colors.addInput(tweakpaneConfig.colors, 'color4')
+paneColors.addInput(config.colors, 'color1')
+paneColors.addInput(config.colors, 'color2')
+paneColors.addInput(config.colors, 'color3')
+paneColors.addInput(config.colors, 'color4')
 
-colors.on('change', (event) => {
-  // @ts-ignore
-  config.colors[event.presetKey] = hexToVec(event.value)
-})
+tweakpane.addInput(config, 'mask')
