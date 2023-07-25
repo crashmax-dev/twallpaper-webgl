@@ -1,10 +1,13 @@
 precision highp float;
 
 uniform vec2 resolution;
+
+// TODO: можешь просто кидать 3 компонента от 0 до 255 и в гл делать vec4(color/255.0, 1.0)
 uniform vec4 color1;
 uniform vec4 color2;
 uniform vec4 color3;
 uniform vec4 color4;
+
 uniform vec2 color1Pos;
 uniform vec2 color2Pos;
 uniform vec2 color3Pos;

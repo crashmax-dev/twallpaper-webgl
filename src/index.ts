@@ -1,5 +1,5 @@
 import fragmentShader from './fragment-shader.glsl?raw'
-import { loadShaders } from './utils.js'
+import { hexToVec4, loadShaders } from './utils.js'
 import vertexShader from './vertex-shader.glsl?raw'
 
 import './styles.css'
@@ -124,14 +124,21 @@ let color2Pos = [targetColor2Pos![0], targetColor2Pos![1]]
 let color3Pos = [targetColor3Pos![0], targetColor3Pos![1]]
 let color4Pos = [targetColor4Pos![0], targetColor4Pos![1]]
 
+const colors = {
+  color1: hexToVec4('#dbddbb'),
+  color2: hexToVec4('#6ba587'),
+  color3: hexToVec4('#d5d88d'),
+  color4: hexToVec4('#88b884')
+}
+
 render()
 
 function render() {
   gl.uniform2fv(resolutionLoc, [gl.canvas.width, gl.canvas.height])
-  gl.uniform4fv(color1Loc, [0xff / 255.0, 0xf6 / 255.0, 0xbf / 255.0, 1])
-  gl.uniform4fv(color2Loc, [0x31 / 255.0, 0x6b / 255.0, 0x4d / 255.0, 1])
-  gl.uniform4fv(color3Loc, [0xf6 / 255.0, 0xe4 / 255.0, 0x77 / 255.0, 1])
-  gl.uniform4fv(color4Loc, [0x76 / 255.0, 0xa0 / 255.0, 0x76 / 255.0, 1])
+  gl.uniform4fv(color1Loc, colors.color1)
+  gl.uniform4fv(color2Loc, colors.color2)
+  gl.uniform4fv(color3Loc, colors.color3)
+  gl.uniform4fv(color4Loc, colors.color4)
   gl.uniform2fv(color1PosLoc, color1Pos)
   gl.uniform2fv(color2PosLoc, color2Pos)
   gl.uniform2fv(color3PosLoc, color3Pos)

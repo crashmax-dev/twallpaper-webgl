@@ -60,3 +60,23 @@ function loadShader(
 
   return shader
 }
+
+export function hexToVec4(
+  hex: string
+): readonly [r: number, g: number, b: number, alpha: number] {
+  if (hex.startsWith('#')) {
+    hex = hex.slice(1)
+  }
+
+  const r = parseInt(hex.slice(0, 2), 16)
+  const g = parseInt(hex.slice(2, 4), 16)
+  const b = parseInt(hex.slice(4, 6), 16)
+
+  let alpha = 255
+  if (hex.length === 8) {
+    alpha = parseInt(hex.slice(6, 8), 16)
+  }
+
+  const color = [r / 255.0, g / 255.0, b / 255.0, alpha / 255.0] as const
+  return color
+}
