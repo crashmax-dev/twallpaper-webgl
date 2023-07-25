@@ -36,13 +36,16 @@ let imageBitmap: ImageBitmap | null = null
 const img = new Image()
 img.crossOrigin = 'anonymous'
 img.src = `patterns/${config.texture}.svg`
-img.onload = async () => {
-  imageBitmap = await createImageBitmap(img, {
+img.addEventListener('load', () => {
+  createImageBitmap(img, {
     resizeWidth: 1440,
     resizeHeight: 2960
-  })
-  renderMaskCanvas()
-}
+  }).then(() => renderMaskCanvas())
+})
+
+img.addEventListener('error', () => {
+  alert('Unable to load image')
+})
 
 function renderMaskCanvas() {
   if (!imageBitmap) return
