@@ -1,6 +1,6 @@
 import { colors, config } from './config.js'
 import fragmentShader from './fragment-shader.glsl?raw'
-import { paneColors, tweakpane } from './tweakpane.js'
+import { paneColors, paneInputMask } from './tweakpane.js'
 import { hexToVec3, loadShaders } from './utils.js'
 import vertexShader from './vertex-shader.glsl?raw'
 
@@ -256,7 +256,7 @@ function animate() {
   }
 }
 
-tweakpane.on('change', () => {
+paneInputMask.on('change', () => {
   renderMaskCanvas()
 })
 

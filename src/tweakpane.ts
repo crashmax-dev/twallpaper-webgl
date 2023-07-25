@@ -4,7 +4,7 @@ import { config } from './config.js'
 
 const container = document.querySelector<HTMLElement>('#tweakpane')!
 
-export const tweakpane = new Pane({
+const tweakpane = new Pane({
   container,
   expanded: true,
   title: document.title
@@ -19,4 +19,4 @@ paneColors.addInput(config.colors, 'color2')
 paneColors.addInput(config.colors, 'color3')
 paneColors.addInput(config.colors, 'color4')
 
-tweakpane.addInput(config, 'mask')
+export const paneInputMask = tweakpane.addInput(config, 'mask')
