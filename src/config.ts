@@ -1,4 +1,4 @@
-import { hexToVec3 } from './utils'
+import { hexToVec3 } from './hex-to-vec3.js'
 
 export const config = {
   mask: false,

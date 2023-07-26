@@ -1,7 +1,8 @@
 import { colors, config } from './config.js'
 import fragmentShader from './fragment-shader.glsl?raw'
+import { hexToVec3 } from './hex-to-vec3.js'
+import { loadShaders } from './load-shaders.js'
 import { paneColors, paneInputMask } from './tweakpane.js'
-import { hexToVec3, loadShaders } from './utils.js'
 import vertexShader from './vertex-shader.glsl?raw'
 
 import './styles.css'
@@ -9,10 +10,12 @@ import './styles.css'
 const gradientContainer = document.querySelector('#gradient')!
 const gradientCanvas = document.createElement('canvas')
 gradientCanvas.id = 'gradient-canvas'
+
 const maskCanvas = document.createElement('canvas')
 maskCanvas.id = 'mask-canvas'
 maskCanvas.height = innerHeight
 maskCanvas.width = innerWidth
+
 gradientContainer.append(gradientCanvas, maskCanvas)
 
 const canvas2d = maskCanvas.getContext('2d')!
