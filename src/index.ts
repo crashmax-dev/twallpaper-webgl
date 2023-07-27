@@ -12,6 +12,7 @@ const gradientCanvas = document.createElement('canvas')
 gradientCanvas.id = 'gradient-canvas'
 
 const maskCanvas = document.createElement('canvas')
+maskCanvas.classList.add('soft-light')
 maskCanvas.id = 'mask-canvas'
 
 gradientContainer.append(gradientCanvas, maskCanvas)
@@ -262,6 +263,7 @@ function animate() {
 }
 
 paneInputMask.on('change', () => {
+  maskCanvas.classList.toggle('soft-light')
   renderMaskCanvas()
 })
 
