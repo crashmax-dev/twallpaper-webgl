@@ -13,8 +13,6 @@ gradientCanvas.id = 'gradient-canvas'
 
 const maskCanvas = document.createElement('canvas')
 maskCanvas.id = 'mask-canvas'
-maskCanvas.height = innerHeight
-maskCanvas.width = innerWidth
 
 gradientContainer.append(gradientCanvas, maskCanvas)
 
@@ -56,19 +54,23 @@ img.addEventListener('error', () => {
 function renderMaskCanvas() {
   if (!imageBitmap) return
 
+  maskCanvas.height = innerHeight
+  maskCanvas.width = innerWidth
+
   const { width, height } = maskCanvas
   canvas2d.clearRect(0, 0, width, height)
 
-  let imageWidth = imageBitmap.width,
-    imageHeight = imageBitmap.height
-  const patternHeight =
-    (500 + window.visualViewport!.height / 2.5) * devicePixelRatio
-  const ratio = patternHeight / imageHeight
-  imageWidth *= ratio
+  const dpr = window.devicePixelRatio
+  let imageWidth = imageBitmap.width * dpr
+  let imageHeight = imageBitmap.height * dpr
+
+  const patternHeight = (500 + innerHeight / 2.5) * dpr
+
+  imageWidth *= patternHeight / imageHeight
   imageHeight = patternHeight
 
   if (config.mask) {
-    canvas2d.fillStyle = '#000'
+    canvas2d.fillStyle = '#0f0f0f'
     canvas2d.fillRect(0, 0, width, height)
     canvas2d.globalCompositeOperation = 'destination-out'
   } else {
@@ -273,3 +275,9 @@ document.addEventListener('click', () => {
   updateTargetColors()
   if (!animating) requestAnimationFrame(animate)
 })
+
+const resizeObserver = new ResizeObserver(() => {
+  renderMaskCanvas()
+})
+
+resizeObserver.observe(document.body)
