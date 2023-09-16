@@ -29,7 +29,7 @@ function updateMask(): void {
 
   wallpaperContainer.style.setProperty(
     '--tw-image',
-    `url(patterns/${maskImage}.svg)`
+    `url(${location.href}patterns/${maskImage}.svg)`
   )
 
   if (isEnabled) {
