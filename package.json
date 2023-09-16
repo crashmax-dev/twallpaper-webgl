@@ -11,11 +11,11 @@
   },
   "devDependencies": {
     "@crashmax/prettier-config": "4.1.0",
-    "typescript": "5.0.2",
-    "vite": "4.4.5"
+    "typescript": "5.2.2",
+    "vite": "4.4.9"
   },
   "dependencies": {
-    "@tweakpane/core": "1.1.9",
-    "tweakpane": "3.1.10"
+    "@tweakpane/core": "2.0.1",
+    "tweakpane": "4.0.1"
   }
 }

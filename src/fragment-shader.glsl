@@ -21,7 +21,7 @@ void main() {
   float dp3 = distance(position, color3Pos);
   float dp4 = distance(position, color4Pos);
   float minD = min(dp1, min(dp2, min(dp3, dp4)));
-  float p = 4.0;
+  float p = 3.0;
 
   dp1 = pow(1.0 - (dp1 - minD), p);
   dp2 = pow(1.0 - (dp2 - minD), p);

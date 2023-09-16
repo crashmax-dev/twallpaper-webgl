@@ -2,25 +2,44 @@ import { colors, config } from './config.js'
 import fragmentShader from './fragment-shader.glsl?raw'
 import { hexToVec3 } from './hex-to-vec3.js'
 import { loadShaders } from './load-shaders.js'
-import { paneColors, paneInputMask } from './tweakpane.js'
+import {
+  maskInputSize,
+  maskList,
+  paneColors,
+  paneInputMask
+} from './tweakpane.js'
 import vertexShader from './vertex-shader.glsl?raw'
 
 import './styles.css'
 
-const gradientContainer = document.querySelector('#gradient')!
+const wallpaperContainer =
+  document.querySelector<HTMLElement>('.wallpaper-wrap')!
 const gradientCanvas = document.createElement('canvas')
-gradientCanvas.id = 'gradient-canvas'
+gradientCanvas.classList.add('wallpaper-canvas')
 
-const maskCanvas = document.createElement('canvas')
-maskCanvas.classList.add('soft-light')
-maskCanvas.id = 'mask-canvas'
+const maskContainer = document.createElement('div')
+maskContainer.classList.add('wallpaper-pattern')
+wallpaperContainer.append(gradientCanvas, maskContainer)
 
-gradientContainer.append(gradientCanvas, maskCanvas)
+function updateMask(): void {
+  const { isEnabled, backgroundColor, maskImage, size } = config.pattern
 
-const canvas2d = maskCanvas.getContext('2d')!
-if (!canvas2d) {
-  throw new Error('Canvas2D not supported')
+  wallpaperContainer.style.setProperty('--tw-size', `${size}px`)
+  wallpaperContainer.style.setProperty('--tw-background', backgroundColor)
+
+  wallpaperContainer.style.setProperty(
+    '--tw-image',
+    `url(patterns/${maskImage}.svg)`
+  )
+
+  if (isEnabled) {
+    gradientCanvas.classList.add('wallpaper-mask')
+  } else {
+    gradientCanvas.classList.remove('wallpaper-mask')
+  }
 }
+
+updateMask()
 
 const gl = gradientCanvas.getContext('webgl')!
 if (!gl) {
@@ -31,77 +50,6 @@ if (!gl) {
 const program = gl.createProgram()!
 if (!program) {
   throw new Error('Unable to create WebGLProgram')
-}
-
-// load mask texture
-let imageBitmap: ImageBitmap | null = null
-const img = new Image()
-img.crossOrigin = 'anonymous'
-img.src = `patterns/${config.texture}.svg`
-img.addEventListener('load', () => {
-  createImageBitmap(img, {
-    resizeWidth: 1440,
-    resizeHeight: 2960
-  }).then((bitmap) => {
-    imageBitmap = bitmap
-    renderMaskCanvas()
-  })
-})
-
-img.addEventListener('error', () => {
-  alert('Unable to load image')
-})
-
-function renderMaskCanvas() {
-  if (!imageBitmap) return
-
-  maskCanvas.height = innerHeight
-  maskCanvas.width = innerWidth
-
-  const { width, height } = maskCanvas
-  canvas2d.clearRect(0, 0, width, height)
-
-  const dpr = window.devicePixelRatio
-  let imageWidth = imageBitmap.width * dpr
-  let imageHeight = imageBitmap.height * dpr
-
-  const patternHeight = (500 + innerHeight / 2.5) * dpr
-
-  imageWidth *= patternHeight / imageHeight
-  imageHeight = patternHeight
-
-  if (config.mask) {
-    canvas2d.fillStyle = '#0f0f0f'
-    canvas2d.fillRect(0, 0, width, height)
-    canvas2d.globalCompositeOperation = 'destination-out'
-  } else {
-    canvas2d.globalCompositeOperation = 'source-over'
-  }
-
-  const draq = (y: number) => {
-    for (let x = 0; x < width; x += imageWidth) {
-      canvas2d.drawImage(imageBitmap!, x, y, imageWidth, imageHeight)
-    }
-  }
-
-  const centerY = (height - imageHeight) / 2
-  draq(centerY)
-
-  if (centerY > 0) {
-    let topY = centerY
-    do {
-      draq((topY -= imageHeight))
-    } while (topY >= 0)
-  }
-
-  const endY = height - 1
-  for (
-    let bottomY = centerY + imageHeight;
-    bottomY < endY;
-    bottomY += imageHeight
-  ) {
-    draq(bottomY)
-  }
 }
 
 // load shaders
@@ -263,23 +211,25 @@ function animate() {
 }
 
 paneInputMask.on('change', () => {
-  maskCanvas.classList.toggle('soft-light')
-  renderMaskCanvas()
+  updateMask()
 })
 
 paneColors.on('change', (event) => {
   // @ts-ignore
-  colors[event.presetKey] = hexToVec3(event.value)
+  colors[event.target.key] = hexToVec3(event.value)
   renderGradientCanvas()
+})
+
+maskList.on('change', (event) => {
+  config.pattern.maskImage = event.value
+  updateMask()
+})
+
+maskInputSize.on('change', () => {
+  updateMask()
 })
 
 document.addEventListener('click', () => {
   updateTargetColors()
   if (!animating) requestAnimationFrame(animate)
 })
-
-const resizeObserver = new ResizeObserver(() => {
-  renderMaskCanvas()
-})
-
-resizeObserver.observe(document.body)
