@@ -40,6 +40,6 @@ export const maskInputSize = paneMask.addBinding(config.pattern, 'size', {
   step: 1
 })
 
-export const paneInputMask = tweakpane.addBinding(config.pattern, 'isEnabled', {
+export const paneInputMask = paneMask.addBinding(config.pattern, 'isEnabled', {
   label: 'mask'
 })
